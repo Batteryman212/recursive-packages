@@ -10,4 +10,4 @@ This script is used to download all dependencies of a list of linux (debian) pac
 ./get_depends.sh linux-azure linux-base magic
 ```
 
-You can the copy/move the `packages/` directory to a storage device, transfer to the offline computer, then run `sudo dpkg -i *.deb` in `packages/` in the offline computer to install all libraries.
+You can then copy/move the `packages/` directory to a storage device, plug in the device to the offline computer, then run `sudo dpkg -i *.deb` in `packages/` in the offline computer to install all libraries.
