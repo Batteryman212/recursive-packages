@@ -38,9 +38,9 @@ do
 	echo "Fetching dependencies for $library"
 
 	#Fetch dependencies
-	CHILD_DEPENDS=$(sudo apt-cache depends $library | grep Depends:)
-	CHILD_DEPENDS=${CHILD_DEPENDS//  Depends: /}
-	CHILD_DEPENDS=${CHILD_DEPENDS//$'\n'/ };
+	CHILD_DEPENDS=$(sudo apt-rdepends $library)
+	CHILD_DEPENDS=${CHILD_DEPENDS//$'\n'/\|};
+	CHILD_DEPENDS=$( echo $CHILD_DEPENDS | sed -e 's/[^|]*Depends\:[^|]*//g' -e 's/\(|\| \)\+/ /g' )
 	#echo "Dependencies: $CHILD_DEPENDS"
 	DEPEND_ARR=($CHILD_DEPENDS)
 	for dependency in $CHILD_DEPENDS
@@ -48,8 +48,7 @@ do
 		if [[ ${seen_library[$dependency]} == 1 ]]; then
 			continue;
 		else
-			#echo "Queueing new dependency $dependency";
-			QUEUE="$QUEUE $dependency";
+			DEPENDS_LIST="$DEPENDS_LIST $dependency"
 			seen_library[$dependency]=1;
 		fi
 	done
@@ -57,7 +56,8 @@ done
 
 # Final Download steps
 LINKS_LIST=$DIR_NAME/links.list;
-echo "Downloading all packages to $LINKS_LIST";
+echo "Downloading the following packages to $LINKS_LIST:";
+echo $DEPENDS_LIST
 
 # Get links to packages in LINKS_LIST file
 sudo apt-get --print-uris --yes -d --reinstall install $DEPENDS_LIST | grep "http://" |  awk '{print$1}' | xargs -I'{}' echo {} | tee $LINKS_LIST;
