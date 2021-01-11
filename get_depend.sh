@@ -13,6 +13,9 @@ FINAL_LIST='';
 # Declare queue string
 QUEUE='';
 
+# Clear apt archives cache: Note this is necessary for the reinstall of packages to download all
+rm /var/cache/apt/archives/*.deb
+
 # Fetch arguments and add to pipe
 for library in "$@"
 do
